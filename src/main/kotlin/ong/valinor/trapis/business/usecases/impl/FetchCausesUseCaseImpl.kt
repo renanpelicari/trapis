@@ -1,0 +1,15 @@
+package ong.valinor.trapis.business.usecases.impl
+
+import ong.valinor.trapis.business.usecases.FetchCausesUseCase
+import ong.valinor.trapis.dataprovider.entity.CauseEntity
+import ong.valinor.trapis.dataprovider.repository.CauseRepository
+import org.springframework.stereotype.Service
+
+@Service
+class FetchCausesUseCaseImpl(private val causeRepository: CauseRepository) : FetchCausesUseCase {
+
+    /**
+     * @see FetchCausesUseCase.execute
+     */
+    override fun execute(): MutableList<CauseEntity> = causeRepository.findAll()
+}
