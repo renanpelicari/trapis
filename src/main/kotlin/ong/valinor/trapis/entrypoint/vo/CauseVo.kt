@@ -2,51 +2,68 @@ package ong.valinor.trapis.entrypoint.vo
 
 import ong.valinor.trapis.dataprovider.domain.Cause
 import ong.valinor.trapis.dataprovider.domain.CauseType
+import java.math.BigDecimal
 import java.time.ZonedDateTime
 
 data class CauseRequestVo(
-        val cause: String,
+        val name: String,
         val description: String,
-        val type: String
+        val deadline: ZonedDateTime?,
+        val pledged: BigDecimal?,
+        val type: CauseTypeRequestVo
 )
 
 data class CauseResponseVo(
-        val causeId: Long,
-        val cause: String,
+        val id: Long,
+        val name: String,
         val description: String,
         val createdAt: ZonedDateTime,
-        val causeTypeResponseVo: CauseTypeResponseVo
+        val deadline: ZonedDateTime?,
+        val pledged: BigDecimal?,
+        val budgetReached: BigDecimal,
+        val causeType: CauseTypeResponseVo
 ) {
     constructor(entity: Cause) : this(
-            causeId = entity.causeId!!,
-            cause = entity.name,
+            id = entity.id!!,
+            name = entity.name,
             description = entity.description,
             createdAt = entity.createdAt,
-            causeTypeResponseVo = CauseTypeResponseVo(entity.causeType))
+            deadline = entity.deadline,
+            pledged = entity.pledged,
+            budgetReached = entity.budgetReached ?: BigDecimal.ZERO,
+            causeType = CauseTypeResponseVo(entity.causeType))
 }
 
 data class CauseTypeRequestVo(
-        val causeType: String
+        val id: Long?,
+        val name: String
 )
 
 data class CauseTypeResponseVo(
-        val causeTypeId: Long,
-        val causeType: String
+        val id: Long,
+        val name: String
 ) {
     constructor(entity: CauseType) : this(
-            causeTypeId = entity.causeTypeId!!,
-            causeType = entity.name
+            id = entity.id!!,
+            name = entity.name
     )
 }
 
-internal fun MutableList<Cause>.toCauseResponseVoList() = iterator().forEach { CauseResponseVo(it) }
+internal fun MutableList<Cause>.toCauseResponseVoList() =
+        map { CauseResponseVo(it) }
 
 internal fun CauseRequestVo.toCause() = Cause(
-        name = this.cause,
+        name = this.name,
         description = this.description,
-        causeType = CauseType(name = this.type)
+        deadline = this.deadline,
+        pledged = this.pledged,
+        causeType = CauseType(
+                id = this.type.id,
+                name = this.type.name
+        )
 )
 
 internal fun CauseTypeRequestVo.toCauseType() = CauseType(
-        name = this.causeType
+        id = this.id,
+        name = this.name
 )

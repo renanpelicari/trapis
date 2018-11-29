@@ -9,5 +9,5 @@ import org.springframework.transaction.annotation.Transactional
 @Transactional
 interface CauseTypeRepository: JpaRepository<CauseType, Long> {
 
-    fun findByName(name: String): CauseType?
+    fun findByNameIgnoreCase(name: String): CauseType?
 }
