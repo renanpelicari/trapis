@@ -1,5 +1,6 @@
 package ong.valinor.trapis.business.usecases.impl
 
+import ong.valinor.trapis.business.exceptions.CouldNotDeleteEntityDueIdNotFound
 import ong.valinor.trapis.business.usecases.DeleteCauseByIdUseCase
 import ong.valinor.trapis.dataprovider.repository.CauseRepository
 import org.springframework.dao.EmptyResultDataAccessException
@@ -16,8 +17,7 @@ class DeleteCauseByIdUseCaseImpl(private val causeRepository: CauseRepository) :
             causeRepository.deleteById(causeId)
 
         } catch (e: EmptyResultDataAccessException) {
-            throw IllegalArgumentException("""Cause could not be delete due id [$causeId] was not found.""")
-
+            throw CouldNotDeleteEntityDueIdNotFound(entityName = "Cause", entityId = causeId)
         }
     }
 
