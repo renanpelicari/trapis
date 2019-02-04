@@ -34,8 +34,8 @@ data class Cause(
         @Column(name = "BACKERS_COUNTER", nullable = false)
         val backersCounter: Int = 0,
 
-        @OneToOne
-        val causeType: CauseType
+        @OneToMany
+        val causeTypes: List<CauseType>
 )
 
 @Entity

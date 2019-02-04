@@ -16,14 +16,16 @@ class RegisterCauseUseCaseImpl(private val causeRepository: CauseRepository,
      */
     override fun execute(cause: Cause): Cause {
 
-        val causeType = findOrSaveCauseTypeByNameUseCaseImpl.execute(
-                causeTypeName = cause.causeType.name
-        )
+        val causeTypes = cause.causeTypes.map {
+            findOrSaveCauseTypeByNameUseCaseImpl.execute(it.name)
+        }
 
+        // FIXME: when causeType already exists, exception occurs due duplicate key, however this cause save should
+        //  not persists causeType again...
         return causeRepository.saveAndFlush(
                 Cause(
                         name = cause.name,
-                        causeType = causeType,
+                        causeTypes = causeTypes,
                         description = cause.description
                 )
         )

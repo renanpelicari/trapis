@@ -10,7 +10,7 @@ data class CauseRequestVo(
         val description: String,
         val deadline: ZonedDateTime?,
         val pledged: BigDecimal?,
-        val type: CauseTypeRequestVo
+        val tags: List<String>
 )
 
 data class CauseResponseVo(
@@ -21,7 +21,7 @@ data class CauseResponseVo(
         val deadline: ZonedDateTime?,
         val pledged: BigDecimal?,
         val budgetReached: BigDecimal,
-        val causeType: CauseTypeResponseVo
+        val tags: List<CauseTypeResponseVo>
 ) {
     constructor(entity: Cause) : this(
             id = entity.id!!,
@@ -31,39 +31,29 @@ data class CauseResponseVo(
             deadline = entity.deadline,
             pledged = entity.pledged,
             budgetReached = entity.budgetReached ?: BigDecimal.ZERO,
-            causeType = CauseTypeResponseVo(entity.causeType))
+            tags = entity.causeTypes.toCauseTypeVoList()
+    )
 }
-
-data class CauseTypeRequestVo(
-        val id: Long?,
-        val name: String
-)
 
 data class CauseTypeResponseVo(
         val id: Long,
         val name: String
-) {
-    constructor(entity: CauseType) : this(
-            id = entity.id!!,
-            name = entity.name
-    )
-}
+)
+
+internal fun List<CauseType>.toCauseTypeVoList() =
+        map { CauseTypeResponseVo(id = it.id!!, name = it.name) }
 
 internal fun MutableList<Cause>.toCauseResponseVoList() =
         map { CauseResponseVo(it) }
+
+internal fun List<String>.toCauseTypes() =
+        map { CauseType(id = null, name = it) }
 
 internal fun CauseRequestVo.toCause() = Cause(
         name = this.name,
         description = this.description,
         deadline = this.deadline,
         pledged = this.pledged,
-        causeType = CauseType(
-                id = this.type.id,
-                name = this.type.name
-        )
+        causeTypes = this.tags.toCauseTypes()
 )
 
-internal fun CauseTypeRequestVo.toCauseType() = CauseType(
-        id = this.id,
-        name = this.name
-)
