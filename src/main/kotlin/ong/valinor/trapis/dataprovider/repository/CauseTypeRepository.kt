@@ -6,7 +6,6 @@ import org.springframework.stereotype.Repository
 import org.springframework.transaction.annotation.Transactional
 
 @Repository
-@Transactional
 interface CauseTypeRepository: JpaRepository<CauseType, Long> {
 
     fun findByNameIgnoreCase(name: String): CauseType?

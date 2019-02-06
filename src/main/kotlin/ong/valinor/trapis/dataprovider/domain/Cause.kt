@@ -34,7 +34,12 @@ data class Cause(
         @Column(name = "BACKERS_COUNTER", nullable = false)
         val backersCounter: Int = 0,
 
-        @OneToMany
+        @ManyToMany(fetch = FetchType.EAGER)
+        @JoinTable(
+                name = "T_CAUSE_CAUSE_TYPES",
+                joinColumns = [(JoinColumn(name = "CAUSE_ID", referencedColumnName = "CAUSE_ID"))],
+                inverseJoinColumns = [(JoinColumn(name = "CAUSE_TYPE_ID", referencedColumnName = "CAUSE_TYPE_ID"))]
+        )
         val causeTypes: List<CauseType>
 )
 

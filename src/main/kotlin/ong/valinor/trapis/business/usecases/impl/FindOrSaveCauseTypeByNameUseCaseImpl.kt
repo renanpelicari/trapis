@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
 @Service
+@Transactional
 class FindOrSaveCauseTypeByNameUseCaseImpl(
         private val causeTypeRepository: CauseTypeRepository): FindOrSaveCauseTypeByNameUseCase {
 
@@ -15,6 +16,6 @@ class FindOrSaveCauseTypeByNameUseCaseImpl(
      */
     override fun execute(causeTypeName: String): CauseType {
         return causeTypeRepository.findByNameIgnoreCase(causeTypeName)
-            ?: causeTypeRepository.saveAndFlush(CauseType(name = causeTypeName))
+            ?: causeTypeRepository.save(CauseType(name = causeTypeName))
     }
 }

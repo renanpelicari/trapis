@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
 @Service
+@Transactional
 class RegisterCauseUseCaseImpl(private val causeRepository: CauseRepository,
                                private val findOrSaveCauseTypeByNameUseCaseImpl: FindOrSaveCauseTypeByNameUseCaseImpl)
     : RegisterCauseUseCase {
@@ -20,9 +21,7 @@ class RegisterCauseUseCaseImpl(private val causeRepository: CauseRepository,
             findOrSaveCauseTypeByNameUseCaseImpl.execute(it.name)
         }
 
-        // FIXME: when causeType already exists, exception occurs due duplicate key, however this cause save should
-        //  not persists causeType again...
-        return causeRepository.saveAndFlush(
+        return causeRepository.save(
                 Cause(
                         name = cause.name,
                         causeTypes = causeTypes,
