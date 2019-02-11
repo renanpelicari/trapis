@@ -1,5 +1,6 @@
 package ong.valinor.trapis.dataprovider.domain
 
+import org.hibernate.annotations.GenericGenerator
 import java.math.BigDecimal
 import java.time.ZonedDateTime
 import javax.persistence.*
@@ -9,14 +10,14 @@ import javax.persistence.*
 data class Cause(
 
         @Id
-        @GeneratedValue(strategy = GenerationType.SEQUENCE)
-        @Column(name = "CAUSE_ID", unique = true, nullable = false)
+        @GeneratedValue(strategy = GenerationType.IDENTITY)
+        @Column(name = "CAUSE_ID", unique = true, columnDefinition = "serial")
         val id: Long? = null,
 
-        @Column(name = "NAME", nullable = false)
+        @Column(name = "NAME", nullable = false, length = 120)
         val name: String,
 
-        @Column(name = "DESCRIPTION", nullable = false)
+        @Column(name = "DESCRIPTION", nullable = false, length = 500)
         val description: String,
 
         @Column(name = "CREATED_AT", nullable = false)
@@ -34,9 +35,9 @@ data class Cause(
         @Column(name = "BACKERS_COUNTER", nullable = false)
         val backersCounter: Int = 0,
 
-        @ManyToMany(fetch = FetchType.EAGER)
+        @ManyToMany
         @JoinTable(
-                name = "T_CAUSE_CAUSE_TYPES",
+                name = "T_CAUSE_CAUSE_TYPE",
                 joinColumns = [(JoinColumn(name = "CAUSE_ID", referencedColumnName = "CAUSE_ID"))],
                 inverseJoinColumns = [(JoinColumn(name = "CAUSE_TYPE_ID", referencedColumnName = "CAUSE_TYPE_ID"))]
         )
@@ -48,10 +49,10 @@ data class Cause(
 data class CauseType(
 
         @Id
-        @GeneratedValue(strategy = GenerationType.SEQUENCE)
-        @Column(name = "CAUSE_TYPE_ID", unique = true, nullable = false)
+        @GeneratedValue(strategy = GenerationType.IDENTITY)
+        @Column(name = "CAUSE_TYPE_ID", unique = true, columnDefinition = "serial")
         val id: Long? = null,
 
-        @Column(name = "NAME", unique = true, nullable = false)
+        @Column(name = "NAME", unique = true, nullable = false, length = 50)
         val name: String
 )

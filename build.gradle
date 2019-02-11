@@ -1,18 +1,21 @@
 buildscript {
 	ext {
-		kotlinVersion = '1.3.10'
+		kotlinVersion = '1.3.20'
 		springBootVersion = '2.1.1.BUILD-SNAPSHOT'
 	}
 	repositories {
 		mavenCentral()
-		maven { url "https://repo.spring.io/snapshot" }
-		maven { url "https://repo.spring.io/milestone" }
+		maven { url 'https://repo.spring.io/snapshot' }
+		maven { url 'https://repo.spring.io/milestone' }
+		maven { url 'https://plugins.gradle.org/m2/' }
+
 	}
 	dependencies {
 		classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
 		classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:${kotlinVersion}")
 		classpath("org.jetbrains.kotlin:kotlin-allopen:${kotlinVersion}")
 		classpath("org.jetbrains.kotlin:kotlin-noarg:${kotlinVersion}")
+		classpath('gradle.plugin.com.boxfuse.client:gradle-plugin-publishing:5.2.4')
 	}
 }
 
@@ -22,32 +25,35 @@ apply plugin: 'kotlin-jpa'
 apply plugin: 'eclipse'
 apply plugin: 'org.springframework.boot'
 apply plugin: 'io.spring.dependency-management'
+apply plugin: 'org.flywaydb.flyway'
 
 group = 'ong.valinor'
 version = '0.0.1-SNAPSHOT'
 sourceCompatibility = 1.8
+
 compileKotlin {
 	kotlinOptions {
-		freeCompilerArgs = ["-Xjsr305=strict"]
-		jvmTarget = "1.8"
+		freeCompilerArgs = ['-Xjsr305=strict']
+		jvmTarget = '1.8'
 	}
 }
 compileTestKotlin {
 	kotlinOptions {
-		freeCompilerArgs = ["-Xjsr305=strict"]
-		jvmTarget = "1.8"
+		freeCompilerArgs = ['-Xjsr305=strict']
+		jvmTarget = '1.8'
 	}
 }
 
 repositories {
+	jcenter()
 	mavenCentral()
-	maven { url "https://repo.spring.io/snapshot" }
-	maven { url "https://repo.spring.io/milestone" }
+	maven { url 'https://repo.spring.io/snapshot' }
+	maven { url 'https://repo.spring.io/milestone' }
 }
 
 configurations {
 	// in order to use jetty as embedded server
-	implementation.exclude module: "spring-boot-starter-tomcat"
+	implementation.exclude module: 'spring-boot-starter-tomcat'
 }
 
 dependencies {
@@ -56,9 +62,25 @@ dependencies {
 	implementation('org.springframework.boot:spring-boot-starter-data-jpa')
 	implementation('org.springframework.boot:spring-boot-starter-web')
 	implementation('com.fasterxml.jackson.module:jackson-module-kotlin')
-	implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
-	implementation("org.jetbrains.kotlin:kotlin-reflect")
-	//runtimeOnly('org.postgresql:postgresql')
-	runtimeOnly('com.h2database:h2')
+	implementation('org.jetbrains.kotlin:kotlin-stdlib-jdk8')
+	implementation('org.jetbrains.kotlin:kotlin-reflect')
+	implementation('org.postgresql:postgresql')
+	implementation('org.flywaydb:flyway-core')
+
+	runtime('org.postgresql:postgresql')
+
 	testImplementation('org.springframework.boot:spring-boot-starter-test')
+}
+
+flyway {
+	baselineOnMigrate = true
+	encoding = 'UTF-8'
+	outOfOrder = false
+
+	driver = 'org.postgresql.Driver'
+	url = 'jdbc:postgresql://172.40.128.107:5432/trapis'
+	user = 'trapis'
+	password = 'kvothe'
+	schemas = ['public']
+	locations = ['filesystem:src/main/resources/db/migration/public']
 }

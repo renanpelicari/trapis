@@ -1,0 +1,19 @@
+version: "3.1"
+
+services:
+  db:
+    image: postgres
+    restart: always
+    environment:
+      POSTGRES_DB: trapis
+      POSTGRES_USER: trapis
+      POSTGRES_PASSWORD: kvothe
+    networks:
+      static-network:
+        ipv4_address: 172.40.128.107
+
+networks:
+  static-network:
+    ipam:
+      config:
+        - subnet: 172.40.0.0/16
